@@ -9,6 +9,7 @@ fn main() {
     App::build()
         .add_startup_system(setup.system())
         .add_startup_stage("game_setup", SystemStage::single(spawn_snake.system()))
+        .add_system(snake_movement.system())
         .add_plugins(DefaultPlugins)
         .run();
 
@@ -29,4 +30,24 @@ fn spawn_snake(mut commands: Commands, materials: Res<Materials>) {
             ..Default::default()
         })
         .insert(SnakeHead);
+}
+
+fn snake_movement(
+    keyboard_input: Res<Input<KeyCode>>,
+    mut head_positions: Query<&mut Transform, With<SnakeHead>>) {
+
+    for mut transform in head_positions.iter_mut() {
+        if keyboard_input.pressed(KeyCode::Left) {
+            transform.translation.x -= 2.;
+        }
+        if keyboard_input.pressed(KeyCode::Right) {
+            transform.translation.x += 2.;
+        }
+        if keyboard_input.pressed(KeyCode::Up) {
+            transform.translation.y += 2.;
+        }
+        if keyboard_input.pressed(KeyCode::Down) {
+            transform.translation.y -= 2.;
+        }
+    }
 }
